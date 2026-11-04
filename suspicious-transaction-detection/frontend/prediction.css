@@ -1,0 +1,2 @@
+.prediction-id{font:600 9px 'DM Sans',sans-serif;color:#68768b;background:#ffffffa8;padding:5px 8px;border-radius:5px;overflow-wrap:anywhere}
+.prediction-placeholder .prediction-symbol::after{content:'';display:block;width:11px;height:11px;border:2px solid currentColor;border-radius:50%;box-shadow:inset 0 0 0 3px #eee8ff}

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#f4f6fb">
+  <title>FraudShield - Transaction Detection</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/analytics.css">
+  <link rel="stylesheet" href="/dashboard.css">
+  <link rel="stylesheet" href="/sidebar-fix.css">
+  <link rel="stylesheet" href="/prediction.css">
+</head>
+<body>
+<div class="dashboard-shell">
+  <aside class="sidebar">
+    <a class="brand" href="#overview"><span class="brand-mark">F</span><span>Fraud Transaction<small>DETECTION SYSTEM</small></span></a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a class="nav-item active" href="#overview"><span>&#8962;</span>Dashboard</a>
+      <a class="nav-item" href="#predict"><span>&#8981;</span>Predict Transaction</a>
+      <a class="nav-item" href="#batch"><span>&#9636;</span>Batch Analysis</a>
+      <a class="nav-item" href="#history"><span>&#9719;</span>Transaction History</a>
+      <a class="nav-item" href="#model"><span>&#9637;</span>Model Details</a>
+      <a class="nav-item" href="#about"><span>&#9432;</span>About</a>
+    </nav>
+    <div class="sidebar-bottom"><span class="service-dot" id="service-dot"></span><span id="service-status">Connecting to services...</span></div>
+  </aside>
+
+  <main class="main-content">
+    <header class="topbar">
+      <div class="crumb">FraudShield <span>/</span> <b id="crumb-title">Dashboard</b></div>
+      <div class="top-actions"><span class="model-status" id="model-status"><i></i>Checking model...</span><span class="today" id="today"></span><button class="button button-light" id="refresh">Refresh</button></div>
+    </header>
+    <div class="notice hidden" id="notice" role="status"></div>
+
+    <section class="app-page" id="page-overview" data-page="overview">
+      <div class="page-heading"><div><div class="eyebrow">FRAUD MONITORING</div><h1>Fraud Transaction Detection System</h1><p>AI assisted scoring to help review suspicious financial activity.</p></div><button class="button button-light" id="load-sample">Load sample data</button></div>
+      <div class="summary-cards">
+        <article class="summary-card blue-card"><span class="summary-icon">&#9881;</span><div><span>Total Transactions</span><strong id="total-count">&#8212;</strong></div></article>
+        <article class="summary-card green-card"><span class="summary-icon">&#10003;</span><div><span>Lower Risk</span><strong id="legitimate-count">&#8212;</strong></div></article>
+        <article class="summary-card red-card"><span class="summary-icon">!</span><div><span>Flagged for Review</span><strong id="flagged-count">&#8212;</strong></div></article>
+        <article class="summary-card violet-card"><span class="summary-icon">%</span><div><span>Flagged Rate</span><strong id="flagged-rate">&#8212;</strong></div></article>
+      </div>
+
+      <div class="dashboard-grid charts-row">
+        <article class="surface-card distribution-card">
+          <div class="card-heading"><div><h2>Transaction Distribution</h2><p>Lower risk and flagged activity</p></div></div>
+          <div class="distribution-content"><div class="donut-wrap"><div class="dashboard-donut" id="distribution-donut"><div><strong id="distribution-total">&#8212;</strong><span>Analyzed</span></div></div><span class="donut-rate" id="donut-rate">&#8212;</span></div><div class="distribution-legend" id="distribution-legend"></div></div>
+        </article>
+        <article class="surface-card amount-card">
+          <div class="card-heading"><div><h2>Transaction Amount by Risk</h2><p>Latest analyzed transactions - INR</p></div></div>
+          <div class="boxplot" id="amount-boxplot"><div class="empty-chart">Add or analyze transactions to view amount ranges.</div></div>
+        </article>
+      </div>
+
+      <div class="dashboard-grid lower-row">
+        <article class="surface-card predict-preview" id="single-predict-card">
+          <div class="card-heading"><div><h2>Predict a Single Transaction</h2><p>Enter transaction details to score with the active model.</p></div></div>
+          <form id="single-predict-form" class="single-form">
+            
+            <label>Transaction amount (&#8377;)<input name="amount" type="number" min="0" step="0.01" value="25000" required></label>
+            <label>Transaction type<select name="transaction_type"><option>PURCHASE</option><option>TRANSFER</option><option>WITHDRAWAL</option><option>PAYMENT</option><option>DEPOSIT</option></select></label>
+            <label>Account age (days)<input name="account_age_days" type="number" min="0" value="30" required></label>
+            <label>Transaction hour<input name="hour" type="number" min="0" max="23" value="22" required></label>
+            <label>Location<input name="location" maxlength="80" value="Mumbai" required></label>
+            <label>Merchant category<select name="merchant_category"><option>Shopping</option><option>Groceries</option><option>Restaurants</option><option>Travel</option><option>Electronics</option><option>Healthcare</option><option>Utilities</option><option>Crypto Exchange</option></select></label>
+            <label>Transactions per day<input name="transaction_frequency" type="number" min="0" value="8" required></label>
+            <button class="button button-primary predict-button" type="submit">Predict Risk</button>
+          </form>
+        </article>
+        <article class="surface-card prediction-card" id="prediction-card" aria-live="polite">
+          <div class="card-heading"><div><h2>Prediction Result</h2><p>Model output for your latest prediction</p></div></div>
+          <div class="prediction-placeholder" id="prediction-placeholder"><span class="prediction-symbol" aria-hidden="true"></span><strong>Ready to analyze</strong><p>Enter transaction details and select Predict Risk.</p></div>
+          <div class="prediction-result hidden" id="prediction-result"><span class="prediction-symbol" id="prediction-symbol">!</span><strong id="prediction-title"></strong><b class="prediction-score" id="prediction-score"></b><small class="prediction-id" id="prediction-id"></small><p id="prediction-detail"></p><ul id="prediction-reasons"></ul></div>
+        </article>
+        <article class="surface-card recent-card">
+          <div class="card-heading"><div><h2>Recent Transactions</h2><p>Latest recorded activity</p></div><a class="text-link" href="#history">View history</a></div>
+          <div class="recent-table-wrap"><table class="recent-table"><thead><tr><th>Txn ID</th><th>Amount</th><th>Type</th><th>Risk</th><th>Score</th></tr></thead><tbody id="recent-rows"><tr><td colspan="5" class="empty-chart">Loading transactions...</td></tr></tbody></table></div>
+        </article>
+      </div>
+      <p class="page-disclaimer">Risk scores support review and are not confirmed fraud labels or calibrated probabilities.</p>
+    </section>
+
+    <section class="app-page hidden" id="page-predict" data-page="predict">
+      <div class="page-heading"><div><div class="eyebrow">SINGLE TRANSACTION</div><h1>Predict Transaction</h1><p>Score one transaction using the model currently loaded by the ML service.</p></div></div>
+      <div class="predict-page-grid"><article class="surface-card"><div class="card-heading"><div><h2>Transaction Details</h2><p>Provide the required transaction fields.</p></div></div><form id="single-predict-form-copy" class="single-form">
+        <label>Transaction amount (&#8377;)<input name="amount" type="number" min="0" step="0.01" value="25000" required></label><label>Transaction type<select name="transaction_type"><option>PURCHASE</option><option>TRANSFER</option><option>WITHDRAWAL</option><option>PAYMENT</option><option>DEPOSIT</option></select></label><label>Account age (days)<input name="account_age_days" type="number" min="0" value="30" required></label><label>Transaction hour<input name="hour" type="number" min="0" max="23" value="22" required></label><label>Location<input name="location" maxlength="80" value="Mumbai" required></label><label>Merchant category<select name="merchant_category"><option>Shopping</option><option>Groceries</option><option>Restaurants</option><option>Travel</option><option>Electronics</option><option>Healthcare</option><option>Utilities</option><option>Crypto Exchange</option></select></label><label>Transactions per day<input name="transaction_frequency" type="number" min="0" value="8" required></label><button class="button button-primary predict-button" type="submit">Predict Risk</button>
+      </form></article><article class="surface-card"><div class="card-heading"><div><h2>Prediction Result</h2><p>Scores are interpreted using the configured risk thresholds.</p></div></div><div class="prediction-placeholder" id="prediction-placeholder-copy"><span class="prediction-symbol" aria-hidden="true"></span><strong>Ready to analyze</strong><p>Submit the form to view the active model's result.</p></div><div class="prediction-result hidden" id="prediction-result-copy"><span class="prediction-symbol" id="prediction-symbol-copy">!</span><strong id="prediction-title-copy"></strong><b class="prediction-score" id="prediction-score-copy"></b><small class="prediction-id" id="prediction-id-copy"></small><p id="prediction-detail-copy"></p><ul id="prediction-reasons-copy"></ul></div></article></div>
+    </section>
+
+    <section class="app-page hidden" id="page-batch" data-page="batch">
+      <div class="page-heading"><div><div class="eyebrow">BATCH SCORING</div><h1>Batch Analysis</h1><p>Upload a transaction CSV to import it and score its rows.</p></div></div>
+      <article class="surface-card batch-card"><div class="upload-drop"><span class="upload-symbol">&#8593;</span><h2>Upload transaction CSV</h2><p>Required columns: transaction_id, user_id, amount, transaction_type, timestamp, location, merchant_category, account_age_days, transaction_frequency.</p><label class="button button-primary upload-button">Choose CSV file<input type="file" id="batch-upload" accept=".csv,text/csv" hidden></label><div id="batch-status" class="batch-status">No file selected.</div></div></article>
+    </section>
+
+    <section class="app-page hidden" id="page-history" data-page="history">
+      <div class="page-heading"><div><div class="eyebrow">TRANSACTION RECORDS</div><h1>Transaction History</h1><p>Search and review all imported and manually scored transactions.</p></div><button class="button button-light" id="history-export">Export CSV</button></div>
+      <article class="surface-card history-card"><div class="history-toolbar"><input id="history-search" type="search" placeholder="Search transaction or user ID"><select id="history-risk"><option value="">All risk levels</option><option>HIGH</option><option>MEDIUM</option><option>LOW</option><option value="UNANALYZED">Unanalyzed</option></select><button class="button button-light" id="history-refresh">Refresh</button></div><div class="recent-table-wrap"><table class="history-table"><thead><tr><th>Transaction ID</th><th>User</th><th>Date &amp; Time</th><th>Amount</th><th>Type</th><th>Risk Score</th><th>Risk Level</th><th>Status</th></tr></thead><tbody id="history-rows"><tr><td colspan="8" class="empty-chart">Loading history...</td></tr></tbody></table></div><div class="history-footer"><span id="history-count">&#8212;</span><div><button class="button button-light" id="history-prev">Previous</button><span id="history-page">Page 1</span><button class="button button-light" id="history-next">Next</button></div></div></article>
+    </section>
+
+    <section class="app-page hidden" id="page-model" data-page="model">
+      <div class="page-heading"><div><div class="eyebrow">MODEL MONITORING</div><h1>Model Details</h1><p>Inspect the active training source and compare algorithms on the bundled synthetic holdout.</p></div><button class="button button-primary" id="run-model-evaluation">Compare Models</button></div>
+      <article class="surface-card active-model-card"><div class="card-heading"><div><h2>Active Model</h2><p id="active-model">Loading model information...</p></div></div><div class="model-meta-grid" id="model-meta-grid"></div><p class="page-disclaimer" id="model-disclaimer"></p></article>
+      <article class="surface-card comparison-card"><div class="card-heading"><div><h2>Model Comparison</h2><p>Metrics on a stratified holdout of synthetic injected anomalies.</p></div></div><div class="model-evaluation-grid" id="model-evaluation-results"><div class="empty-chart">Select Compare Models to run evaluation.</div></div></article>
+    </section>
+
+    <section class="app-page hidden" id="page-about" data-page="about">
+      <div class="page-heading"><div><div class="eyebrow">PROJECT INFORMATION</div><h1>About FraudShield</h1><p>A machine learning demonstration for transaction monitoring and risk review.</p></div></div>
+      <article class="surface-card about-card"><h2>How it works</h2><p>Transactions are cleaned and converted into features before the active model scores them. Labeled training data selects a supervised classifier by holdout F1; unlabeled training data uses Isolation Forest. The dashboard applies configured thresholds to show low, medium, or high risk.</p><h2>Interpret results carefully</h2><p>The bundled labels are synthetic examples. Model results and risk scores are not evidence of confirmed fraud. Review flagged transactions with context and use representative, confirmed outcomes before considering real deployments.</p><h2>Supported transaction data</h2><p>CSV imports must contain the transaction fields listed on the Batch Analysis page. Missing numeric values can be imputed by the ML service; malformed rows are rejected during import.</p></article>
+    </section>
+    <footer>FraudShield - Local demo - Risk alerts require human review.</footer>
+  </main>
+</div>
+<dialog id="detail-dialog"><form method="dialog"><button class="dialog-close" aria-label="Close">X</button></form><div id="detail-content"></div></dialog>
+<script src="/app.js" defer></script>
+</body>
+</html>

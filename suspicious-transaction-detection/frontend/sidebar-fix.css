@@ -1,0 +1,6 @@
+.dashboard-shell .sidebar{overflow-x:hidden}
+.dashboard-shell .brand{min-width:0;line-height:1.15}
+.dashboard-shell .brand>span:first-child{flex:0 0 34px}
+.dashboard-shell .brand>span:last-child{min-width:0;overflow-wrap:anywhere}
+.dashboard-shell .nav-item{display:flex;align-items:center;white-space:nowrap;overflow:hidden}
+.dashboard-shell .nav-item span{flex:0 0 18px;width:18px;line-height:1;text-align:center}
