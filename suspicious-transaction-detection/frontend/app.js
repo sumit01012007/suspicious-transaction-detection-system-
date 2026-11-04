@@ -1,4 +1,6 @@
-const API = 'http://localhost:5000/api';
+const API = window.FRAUDSHIELD_API_URL || (location.hostname === 'localhost' || location.hostname === '127.0.0.1'
+  ? 'http://localhost:5000/api'
+  : '/api');
 const state = { page: 1, pages: 1, search: '', risk: '', records: [], summary: null };
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "outputDirectory": "frontend",
+  "functions": {
+    "api/[...path].js": {
+      "includeFiles": "backend/**,ml-service/dataset/sample_transactions.csv",
+      "excludeFiles": "{backend/.env,backend/node_modules/**,backend/uploads/**}",
+      "maxDuration": 30
+    },
+    "api/ml/[...path].py": {
+      "includeFiles": "ml-service/models/**,ml-service/preprocessing/**,ml-service/dataset/**",
+      "excludeFiles": "{venv/**,backend/node_modules/**,frontend/**,logs/**,backend/.env,backend/uploads/**}",
+      "maxDuration": 60
+    }
+  }
+}

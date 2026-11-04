@@ -29,6 +29,14 @@ cd .\frontend
 - Backend health: <http://localhost:5000/api/health>
 - ML health: <http://localhost:8000/health>
 
+## Deploy frontend, backend, and ML API on Vercel
+
+The Vercel setup serves `frontend/` as the static dashboard, routes `/api/*` to the Express function in `api/[...path].js`, and routes `/api/ml/*` to the Python FastAPI function in `api/ml/[...path].py`. The Express service calls the ML function using Vercel's deployment URL. Python dependencies for that function are in `api/ml/requirements.txt`; the existing Streamlit app has its own root `requirements.txt`.
+
+Import the GitHub repository into Vercel. If this project is nested inside the repository, set **Root Directory** to `suspicious-transaction-detection`. Keep the Vercel project root at that folder and deploy; `vercel.json`, `package.json`, and `.python-version` configure the deployment. Do not set `ML_SERVICE_URL` to localhost. The project does not need that variable on Vercel because it derives the ML function URL from `VERCEL_URL`.
+
+Vercel serverless storage is temporary. The API uses `/tmp` for its CSV store, so uploaded transactions and settings are not durable and may differ between function instances. Use a database or durable object storage before relying on imported data. This demo has no authentication; do not publish real or sensitive transaction records.
+
 The backend requires Node.js 18 or newer and `npm install` in `backend/`. The ML service requires the dependencies in `ml-service/requirements.txt`; a committed model is already provided. If the virtual environment is missing, create one with `python -m venv venv`, activate it, and run `pip install -r ml-service/requirements.txt` from this directory. The dashboard is plain HTML, CSS, and JavaScript served by Python's built-in HTTP server.
 
 ## Dashboard analysis

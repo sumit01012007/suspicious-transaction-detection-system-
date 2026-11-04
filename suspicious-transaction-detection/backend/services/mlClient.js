@@ -1,5 +1,7 @@
 const { ApiError } = require('../middleware/errors');
-const BASE = () => (process.env.ML_SERVICE_URL || 'http://localhost:8000').replace(/\/$/, '');
+const BASE = () => (process.env.ML_SERVICE_URL || (process.env.VERCEL && process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}/api/ml`
+  : 'http://localhost:8000')).replace(/\/$/, '');
 
 async function call(path, options = {}, timeoutMs = 120000) {
   let res;

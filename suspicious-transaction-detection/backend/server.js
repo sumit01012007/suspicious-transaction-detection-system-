@@ -6,9 +6,9 @@ const routes = require('./routes');
 const { notFound, errorHandler } = require('./middleware/errors');
 
 const app = express();
-const origins = (process.env.CORS_ORIGINS || 'http://localhost:3000').split(',').map((s) => s.trim());
+const origins = (process.env.CORS_ORIGINS || (process.env.VERCEL ? '*' : 'http://localhost:3000')).split(',').map((s) => s.trim());
 app.use(cors({
-  origin: (origin, cb) => (!origin || origins.includes(origin) ? cb(null, true) : cb(new Error('Origin not allowed by CORS'))),
+  origin: (origin, cb) => (!origin || origins.includes('*') || origins.includes(origin) ? cb(null, true) : cb(new Error('Origin not allowed by CORS'))),
   methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE'],
   credentials: true,
   exposedHeaders: ['Content-Disposition'],
